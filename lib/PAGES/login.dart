@@ -1,5 +1,7 @@
+import 'package:edmusica_admin/PAGES/dashboard.dart';
 import 'package:edmusica_admin/PAGES/signup.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:flutter_library/COMPONENTS/button_view.dart';
 import 'package:flutter_library/COMPONENTS/image_view.dart';
 import 'package:flutter_library/COMPONENTS/main_view.dart';
@@ -25,7 +27,50 @@ class _LoginState extends State<Login> {
   TextEditingController _email = TextEditingController();
   TextEditingController _password = TextEditingController();
   //
-  void onLogIn() async {}
+  void onLogIn() async {
+    if (_email.text.isEmpty || _password.text.isEmpty) {
+      setState(() {
+        widget.dm.alertMissingInfo();
+      });
+      return;
+    }
+
+    setState(() {
+      widget.dm.setToggleLoading(true);
+    });
+
+    final user = await auth_SignIn(_email.text, _password.text, 'Admin');
+    if (user != null) {
+      widget.dm.setToggleLoading(false);
+      nav_PushAndRemove(context, Dashboard(dm: widget.dm));
+    } else {
+      setState(() {
+        widget.dm.setToggleLoading(false);
+        widget.dm.alertSomethingWrong();
+      });
+      return;
+    }
+  }
+
+  void init() async {
+    setState(() {
+      widget.dm.setToggleLoading(true);
+    });
+    final signedIn = await widget.dm.checkUser('Admin');
+    print('WE ARE ${signedIn ? 'true' : 'false'}');
+    if (signedIn) {
+      nav_PushAndRemove(context, Dashboard(dm: widget.dm));
+    }
+    setState(() {
+      widget.dm.setToggleLoading(false);
+    });
+  }
+
+  @override
+  void initState() {
+    init();
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {

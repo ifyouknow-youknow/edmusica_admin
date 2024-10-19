@@ -79,7 +79,7 @@ class _SignUpState extends State<SignUp> {
 
               // CHECK DISTRICT
               final docs = await firebase_GetAllDocumentsQueried(
-                  '${appName}_Districts', [
+                  '${widget.dm.theAppName}_Districts', [
                 {'field': 'code', 'operator': '==', 'value': _districtCode.text}
               ]);
               if (docs.isNotEmpty) {
@@ -94,7 +94,7 @@ class _SignUpState extends State<SignUp> {
                 final user = await auth_CreateUser(_email.text, _password.text);
                 if (user != null) {
                   final success = await firebase_CreateDocument(
-                      '${appName}_Admin', user.uid, args);
+                      '${widget.dm.theAppName}_Admin', user.uid, args);
                   if (success) {
                     widget.dm.setToggleLoading(false);
                     nav_PushAndRemove(
